@@ -1,3 +1,7 @@
+# This file is a record of my first attempt
+# at solving some questions
+# I forgot to commit along the process
+
 import csv
 from datetime import datetime
 import calendar
@@ -29,14 +33,28 @@ def convert_date(iso_string):
     # ISO Example: 2021-07-02T07:00:00+08:00
     # expected_result = "Monday 05 July 2021"
 
-    d = datetime.fromisoformat(iso_string)
-    return "{0} {1:02} {2} {3}".format(
-        calendar.day_name[d.weekday()],
-        d.day,
-        calendar.month_name[d.month],
-        d.year
-    )
+    
+    # slicing iso_string to get required info
+    date = iso_string[8:10]
 
+    month_as_number = iso_string[5:7]
+    year = int(iso_string[0:4])
+
+
+    # remove "0" from month_as_number
+    # if string starts with "0"
+    if month_as_number[0] == "0":
+        month_as_number = month_as_number[1:]
+    month_as_number = int(month_as_number)
+
+    weekday_as_number = datetime(year,month_as_number,int(date)).weekday()
+
+    # convert to human readable format
+    month = calendar.month_name[month_as_number]
+    weekday = calendar.day_name[weekday_as_number]
+    return f"{weekday} {date} {month} {year}"
+
+    # try with strptime()
 
 
 def convert_f_to_c(temp_in_farenheit):
@@ -70,20 +88,27 @@ def load_data_from_csv(csv_file):
     Returns:
         A list of lists, where each sublist is a (non-empty) line in the csv file.
     """
-    csv_data = []
+    weather_data = []
     with open(csv_file) as csv_data_list:
         reader = csv.reader(csv_data_list)
         # skip heading line
         next(csv_data_list)
         # remove empty line
         for data in reader:
-            if data != []:
-                csv_data.append([
-                    data[0],
-                    int(data[1]),
-                    int(data[2])
-                ])
-    return csv_data
+            if line == []:
+                continue
+            # example line:
+            # ["2021-07-02T07:00:00+08:00", 49, 67]
+            # append first item in list_in_list
+            list_in_list = [] # new list every loop
+            list_in_list.append(line[0])
+            # item [1],[2] str into int
+            for item in line[1:]:
+                item = int(item)
+                # append int to list_in_list
+                list_in_list.append(item)
+            weather_data.append(list(list_in_list))
+    return weather_data
 
 
 def find_min(weather_data):
@@ -92,7 +117,7 @@ def find_min(weather_data):
     Args:
         weather_data: A list of numbers.
     Returns:
-        The minimum value and it's position in the list.
+        The minium value and it's position in the list.
     """
 
     if len(weather_data) == 0:
@@ -101,14 +126,9 @@ def find_min(weather_data):
     min_temp = ()
     for i, temp in enumerate(weather_data):
         temp = float(temp)
-        # first iteration:
-        # assign first tuple
         if (min_temp == ()):
             min_temp = (temp, i)
             continue
-        # if current temp is lower
-        # than min temp
-        # update min temp and index
         if (temp <= min_temp[0]):
             min_temp = (temp, i)
 
@@ -149,40 +169,7 @@ def generate_summary(weather_data):
     Returns:
         A string containing the summary information.
     """
-
-    # example 1: 5 Day Overview
-    # number of days = length of weather_data
-    summary = f"{len(weather_data)} Day Overview\n"
-    # example 2: The lowest temperature will be 9.4°C, and will occur on Friday 02 July 2021.
-    # use find_min(), convert_f_to_c(),
-    # format_temperature(), convert_date() 
-    min_weather_data = [x[1] for x in weather_data]
-    sum_min_temp = convert_f_to_c(find_min(min_weather_data)[0])
-    min_index = find_min(min_weather_data)[1]
-    sum_min_date = convert_date(weather_data[min_index][0])
-
-    summary += f"  The lowest temperature will be {format_temperature(sum_min_temp)}, and will occur on {sum_min_date}.\n"
-    
-     # example 3: The highest temperature will be 20.0°C, and will occur on Saturday 03 July 2021.1
-    # use find_max(), convert_f_to_c(),
-    # format_temperature, convert_date()
-    max_weather_data = [x[2] for x in weather_data]
-
-    sum_max_temp = convert_f_to_c(find_max(max_weather_data)[0])
-    max_index = find_max(max_weather_data)[1]
-    sum_max_date = convert_date(weather_data[max_index][0])
-
-    summary += f"  The highest temperature will be {format_temperature(sum_max_temp)}, and will occur on {sum_max_date}.\n"
-    
-    # example 4: The average low this week is 12.2°C.
-    sum_ave_low = convert_f_to_c(calculate_mean(min_weather_data))
-    summary += f"  The average low this week is {format_temperature(sum_ave_low)}.\n"
-
-    # example 5: The average high this week is 17.8°C.
-    sum_ave_high = convert_f_to_c(calculate_mean(max_weather_data))
-    summary += f"  The average high this week is {format_temperature(sum_ave_high)}.\n"
-    
-    return summary
+    pass
 
 
 def generate_daily_summary(weather_data):
@@ -193,11 +180,4 @@ def generate_daily_summary(weather_data):
     Returns:
         A string containing the summary information.
     """
-    # new_line = "\n"
-    # concatenate each line to summary
-    summary = ""
-    for day in weather_data:
-        summary += f"---- {convert_date(day[0])} ----\n"
-        summary += f"  Minimum Temperature: {format_temperature(convert_f_to_c(day[1]))}\n"
-        summary += f"  Maximum Temperature: {format_temperature(convert_f_to_c(day[2]))}\n\n"
-    return summary
+    pass

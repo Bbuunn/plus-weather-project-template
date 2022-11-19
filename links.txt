@@ -1,0 +1,15 @@
+datetime.fromisoformat('2011-11-04')
+datetime.datetime(2011, 11, 4, 0, 0)
+
+Readme
+
+https://docs.python.org/3/library/datetime.html#datetime-objects
+
+https://docs.python.org/3/library/datetime.html#datetime.datetime.year
+
+a.month
+a.year
+
+https://docs.python.org/3/library/datetime.html#datetime.datetime.weekday
+
+a.weekday()
